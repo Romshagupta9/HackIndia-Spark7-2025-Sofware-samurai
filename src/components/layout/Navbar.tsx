@@ -53,14 +53,14 @@ const Navbar = () => {
             <Link to="/" className="text-gray-700 dark:text-gray-200 hover:text-primary transition-colors">
               Home
             </Link>
-            <Link to="/features" className="text-gray-700 dark:text-gray-200 hover:text-primary transition-colors">
-              Features
+            <Link to="/resume-analyzer" className="text-gray-700 dark:text-gray-200 hover:text-primary transition-colors">
+              Resume Analyzer
             </Link>
-            <Link to="/pricing" className="text-gray-700 dark:text-gray-200 hover:text-primary transition-colors">
-              Pricing
+            <Link to="/ai-advisor" className="text-gray-700 dark:text-gray-200 hover:text-primary transition-colors">
+              AI Advisor
             </Link>
-            <Link to="/testimonials" className="text-gray-700 dark:text-gray-200 hover:text-primary transition-colors">
-              Testimonials
+            <Link to="/job-trends" className="text-gray-700 dark:text-gray-200 hover:text-primary transition-colors">
+              Job Trends
             </Link>
           </nav>
 
@@ -100,22 +100,22 @@ const Navbar = () => {
               Home
             </Link>
             <Link
-              to="/features"
+              to="/resume-analyzer"
               className="block py-2 text-gray-700 dark:text-gray-200 hover:text-primary"
             >
-              Features
+              Resume Analyzer
             </Link>
             <Link
-              to="/pricing"
+              to="/ai-advisor"
               className="block py-2 text-gray-700 dark:text-gray-200 hover:text-primary"
             >
-              Pricing
+              AI Advisor
             </Link>
             <Link
-              to="/testimonials"
+              to="/job-trends"
               className="block py-2 text-gray-700 dark:text-gray-200 hover:text-primary"
             >
-              Testimonials
+              Job Trends
             </Link>
             <div className="flex space-x-3 pt-2">
               <Button variant="outline" asChild className="w-full">
