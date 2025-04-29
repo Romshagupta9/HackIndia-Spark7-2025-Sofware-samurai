@@ -5,52 +5,52 @@ import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 const testimonials = [
   {
     id: 1,
-    name: "Sarah Johnson",
+    name: "Priya Sharma",
     position: "Software Engineer",
-    company: "TechCorp",
+    company: "InfoTech Solutions",
     image: "https://randomuser.me/api/portraits/women/32.jpg",
     content:
-      "Saarthi completely transformed my job search. The resume analyzer pointed out critical gaps in my technical skills section that I had overlooked. After implementing the suggestions, I received interview calls from three major tech companies within a week!",
+      "सaarthi ने मेरी जॉब सर्च को पूरी तरह से बदल दिया है। AI रेज्यूमे एनालाइज़र ने मेरे टेक्निकल स्किल्स सेक्शन में कई महत्वपूर्ण सुधार सुझाए। इसकी मदद से मुझे तीन बड़ी टेक कंपनियों से इंटरव्यू कॉल्स मिल गए!",
     rating: 5,
   },
   {
     id: 2,
-    name: "Michael Chen",
+    name: "Arjun Mehta",
     position: "Marketing Director",
-    company: "BrandWave",
+    company: "DigiMarket India",
     image: "https://randomuser.me/api/portraits/men/46.jpg",
     content:
-      "The AI career advisor feature is like having a personal career coach available 24/7. I particularly appreciated the industry-specific advice that helped me transition from tech to marketing. Worth every penny!",
+      "AI कैरियर एडवाइज़र फीचर 24/7 उपलब्ध पर्सनल कैरियर कोच जैसा है। मुझे इंडस्ट्री-स्पेसिफिक सलाह मिली जिससे मुझे टेक से मार्केटिंग में ट्रांज़िशन करने में मदद मिली। हर पैसे के लायक सेवा!",
     rating: 5,
   },
   {
     id: 3,
-    name: "Priya Patel",
+    name: "Neha Patel",
     position: "UX Designer",
-    company: "DesignHub",
+    company: "CreativeMinds Studio",
     image: "https://randomuser.me/api/portraits/women/65.jpg",
     content:
-      "As someone who struggles with writing cover letters, Saarthi's guidance was invaluable. The AI helped me highlight my UX portfolio in ways I hadn't considered before. The voice assistant feature is also incredibly convenient.",
+      "कवर लेटर लिखने में परेशानी होने के कारण, सaarthi का मार्गदर्शन बहुत मूल्यवान था। AI ने मेरे UX पोर्टफोलियो को ऐसे तरीकों से हाइलाइट करने में मदद की जो मैंने पहले नहीं सोचे थे। वॉयस असिस्टेंट फीचर भी बहुत सुविधाजनक है।",
     rating: 4,
   },
   {
     id: 4,
-    name: "James Wilson",
+    name: "Vikram Singh",
     position: "Financial Analyst",
-    company: "Global Finance Partners",
+    company: "Bharat Finance Partners",
     image: "https://randomuser.me/api/portraits/men/22.jpg",
     content:
-      "The job trend insights helped me pivot my career focus toward fintech, which I hadn't previously considered. Six months later, I'm in a role that pays 30% more than my previous position. Thank you, Saarthi!",
+      "जॉब ट्रेंड इनसाइट्स ने मुझे फिनटेक की ओर अपना करियर फोकस बदलने में मदद की, जिसके बारे में मैंने पहले नहीं सोचा था। छह महीने बाद, मैं अपनी पिछली पोजिशन से 30% अधिक वेतन वाली नौकरी में हूं। धन्यवाद, सaarthi!",
     rating: 5,
   },
   {
     id: 5,
-    name: "Emma Rodriguez",
+    name: "Anjali Gupta",
     position: "Healthcare Administrator",
-    company: "CityHealth Systems",
+    company: "MediCare Systems India",
     image: "https://randomuser.me/api/portraits/women/47.jpg",
     content:
-      "I was skeptical about AI career advice, but Saarthi proved me wrong. The platform understood the nuances of the healthcare industry and provided targeted advice that generic career sites couldn't match.",
+      "मैं AI कैरियर सलाह के बारे में संदिग्ध थी, लेकिन सaarthi ने मुझे गलत साबित किया। प्लेटफॉर्म ने हेल्थकेयर इंडस्ट्री की बारीकियों को समझा और ऐसी टारगेटेड सलाह दी जो जेनेरिक कैरियर साइट्स नहीं दे सकती।",
     rating: 5,
   },
 ];

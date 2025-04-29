@@ -19,23 +19,20 @@ const CTASection = ({ onCTAClick }: CTASectionProps) => {
       <div className="container mx-auto relative z-10">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to Accelerate Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-green-600">Career Growth</span>?
+            Begin Your Journey With <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-green-600">सaarthi</span>
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
-            Join thousands of professionals who are leveraging AI to advance their careers. 
-            Get started with सaarthi today and unlock your full potential.
+            Join our community of professionals who are using AI to enhance their resumes,
+            improve their skills, and discover new career opportunities.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-gradient-to-r from-orange-600 to-green-600 text-white" onClick={onCTAClick}>
-              Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
+              Get Started <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button size="lg" variant="outline" onClick={onCTAClick}>
-              Schedule a Demo
+              Explore Features
             </Button>
           </div>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-6">
-            No credit card required. 7-day free trial on all premium features.
-          </p>
         </div>
       </div>
     </section>

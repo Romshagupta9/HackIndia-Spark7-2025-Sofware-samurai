@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, BarChart3, Search, Filter } from "lucide-react";
+import { TrendingUp, BarChart3, Search, Filter, IndianRupee } from "lucide-react";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, LineChart, Line, 
@@ -32,10 +31,10 @@ const JobTrends = () => {
   ];
 
   const salaryData = [
-    { name: 'Junior', value: 50000 },
-    { name: 'Mid-level', value: 85000 },
-    { name: 'Senior', value: 120000 },
-    { name: 'Lead', value: 150000 }
+    { name: 'Junior', value: 800000 },
+    { name: 'Mid-level', value: 1500000 },
+    { name: 'Senior', value: 2800000 },
+    { name: 'Lead', value: 4200000 }
   ];
 
   const COLORS = ['#8884d8', '#83a6ed', '#8dd1e1', '#82ca9d', '#a4de6c'];
@@ -208,7 +207,7 @@ const JobTrends = () => {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
                     <YAxis />
-                    <Tooltip formatter={(value) => `$${value.toLocaleString()}`} />
+                    <Tooltip formatter={(value) => `₹${value.toLocaleString()}`} />
                     <Bar dataKey="value" fill="#8884d8" />
                   </BarChart>
                 </ResponsiveContainer>
