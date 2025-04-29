@@ -26,8 +26,8 @@
     --ring: 252 88% 75%;
     --radius: 0.5rem;
 
-    --saarthi-blue: 215 100% 50%;
-    --saarthi-purple: 252 88% 75%;
+    --saarthi-blue: 24 100% 50%;  /* Changed to saffron orange */
+    --saarthi-purple: 120 60% 50%;  /* Changed to green */
   }
 
   .dark {
@@ -68,17 +68,17 @@
   }
 
   .bg-blue-purple-gradient {
-    @apply bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 transition-all;
+    @apply bg-gradient-to-r from-orange-600 to-green-600 text-white hover:from-orange-700 hover:to-green-700 transition-all;
   }
 
   .gradient-text {
-    @apply text-transparent bg-clip-text bg-gradient-to-r from-saarthi-blue to-saarthi-purple font-bold;
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-green-600 font-bold;
   }
 }
 
 @layer utilities {
   .shadow-glow {
-    box-shadow: 0 0 15px rgba(158, 135, 245, 0.4);
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.4);
   }
   
   @keyframes float {

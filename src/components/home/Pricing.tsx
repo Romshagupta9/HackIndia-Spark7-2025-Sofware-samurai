@@ -12,11 +12,11 @@ const PricingTier = ({
   return (
     <div
       className={`glass-card rounded-xl overflow-hidden transition-all duration-300 ${
-        isPopular ? "border-saarthi-purple shadow-glow" : ""
+        isPopular ? "border-green-600 shadow-glow" : ""
       }`}
     >
       {isPopular && (
-        <div className="bg-blue-purple-gradient text-white text-center py-1.5 text-sm font-medium">
+        <div className="bg-gradient-to-r from-orange-600 to-green-600 text-white text-center py-1.5 text-sm font-medium">
           Most Popular
         </div>
       )}
@@ -24,13 +24,13 @@ const PricingTier = ({
         <h3 className="text-xl font-semibold mb-2">{name}</h3>
         <p className="text-gray-600 dark:text-gray-300 mb-4">{description}</p>
         <div className="mb-4">
-          <span className="text-4xl font-bold">${price}</span>
+          <span className="text-4xl font-bold">₹{price}</span>
           {price > 0 && (
             <span className="text-gray-600 dark:text-gray-400">/month</span>
           )}
         </div>
         <Button
-          className={isPopular ? "bg-blue-purple-gradient w-full" : "w-full"}
+          className={isPopular ? "bg-gradient-to-r from-orange-600 to-green-600 w-full" : "w-full"}
           variant={isPopular ? "default" : "outline"}
         >
           {price === 0 ? "Sign Up Free" : "Subscribe Now"}
@@ -71,7 +71,7 @@ const Pricing = () => {
     },
     {
       name: "Professional",
-      price: 19,
+      price: 1499,
       description: "For active job seekers",
       features: [
         "Advanced resume analysis",
@@ -86,7 +86,7 @@ const Pricing = () => {
     },
     {
       name: "Enterprise",
-      price: 49,
+      price: 3999,
       description: "For career advancement",
       features: [
         "Everything in Professional",
@@ -105,7 +105,7 @@ const Pricing = () => {
       <div className="container mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Simple, Transparent <span className="gradient-text">Pricing</span>
+            Simple, Transparent <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-green-600">Pricing</span>
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             Choose the plan that fits your career goals

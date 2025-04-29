@@ -18,10 +18,10 @@ const FeatureCard = ({
 }) => {
   return (
     <div 
-      className="glass-card p-6 rounded-xl flex flex-col items-start transition-all duration-300 hover:shadow-glow cursor-pointer"
+      className="glass-card p-6 rounded-xl flex flex-col items-start transition-all duration-300 hover:shadow-glow cursor-pointer border-2 border-orange-100 dark:border-green-900/30"
       onClick={onClick}
     >
-      <div className="bg-blue-purple-gradient p-3 rounded-lg mb-4">
+      <div className="bg-gradient-to-r from-orange-600 to-green-600 p-3 rounded-lg mb-4">
         <Icon className="h-6 w-6 text-white" />
       </div>
       <h3 className="text-xl font-semibold mb-3">{title}</h3>
@@ -48,7 +48,7 @@ const Features = ({ onFeatureClick }: { onFeatureClick: () => void }) => {
       icon: Mic,
       title: "Voice Assistant",
       description:
-        "Speak directly to Saarthi with voice commands and receive audio responses for a hands-free advisory experience.",
+        "Speak directly to सaarthi with voice commands and receive audio responses for a hands-free advisory experience.",
     },
     {
       icon: TrendingUp,
@@ -66,7 +66,7 @@ const Features = ({ onFeatureClick }: { onFeatureClick: () => void }) => {
       icon: Phone,
       title: "WhatsApp & Telegram",
       description:
-        "Connect Saarthi to your favorite messaging apps for on-the-go career guidance and job alerts wherever you are.",
+        "Connect सaarthi to your favorite messaging apps for on-the-go career guidance and job alerts wherever you are.",
     },
     {
       icon: FileCheck,
@@ -87,10 +87,10 @@ const Features = ({ onFeatureClick }: { onFeatureClick: () => void }) => {
       <div className="container mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Powerful Features for Your <span className="gradient-text">Career Growth</span>
+            Powerful Features for Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-green-600">Career Growth</span>
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Saarthi combines cutting-edge AI technology with career expertise to provide you with the tools you need to succeed.
+            सaarthi combines cutting-edge AI technology with career expertise to provide you with the tools you need to succeed.
           </p>
         </div>
 

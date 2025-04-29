@@ -96,7 +96,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <span className="text-2xl font-bold gradient-text">Saarthi</span>
+            <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-green-600">सaarthi</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -159,7 +159,7 @@ const Navbar = () => {
                 <Button variant="outline" asChild>
                   <Link to="/login">Log In</Link>
                 </Button>
-                <Button className="bg-blue-purple-gradient" asChild>
+                <Button className="bg-gradient-to-r from-orange-600 to-green-600 text-white hover:opacity-90" asChild>
                   <Link to="/signup">Sign Up</Link>
                 </Button>
               </>
@@ -212,7 +212,7 @@ const Navbar = () => {
             
             <div className="flex space-x-3 pt-2">
               {isLoggedIn ? (
-                <Button className="bg-blue-purple-gradient w-full" onClick={() => navigate("/profile")}>
+                <Button className="bg-gradient-to-r from-orange-600 to-green-600 text-white w-full" onClick={() => navigate("/profile")}>
                   <UserCircle className="h-5 w-5 mr-2" />
                   My Profile
                 </Button>
@@ -221,7 +221,7 @@ const Navbar = () => {
                   <Button variant="outline" asChild className="w-full">
                     <Link to="/login">Log In</Link>
                   </Button>
-                  <Button className="bg-blue-purple-gradient w-full" asChild>
+                  <Button className="bg-gradient-to-r from-orange-600 to-green-600 text-white w-full" asChild>
                     <Link to="/signup">Sign Up</Link>
                   </Button>
                 </>

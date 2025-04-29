@@ -25,10 +25,10 @@ const Hero = ({ scrollToFeatures }: HeroProps) => {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center px-4 pt-24 pb-16 overflow-hidden">
-      {/* Background gradient effects */}
+      {/* Background gradient effects with Indian-inspired colors */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-saarthi-blue/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-saarthi-purple/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-green-500/20 rounded-full blur-3xl"></div>
       </div>
 
       {/* Animated particles or orbs (simple version) */}
@@ -59,7 +59,7 @@ const Hero = ({ scrollToFeatures }: HeroProps) => {
 
         {/* Main heading */}
         <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-          <span className="gradient-text">Saarthi</span> - Advance Your Career
+          <span className="gradient-text">सaarthi</span> - Advance Your Career
           <br className="hidden md:block" /> With AI Guidance
         </h1>
 
@@ -71,10 +71,10 @@ const Hero = ({ scrollToFeatures }: HeroProps) => {
 
         {/* CTA buttons */}
         <div className="flex flex-col sm:flex-row gap-4 mb-12">
-          <Button size="lg" className="bg-blue-purple-gradient" onClick={handleGetStarted}>
+          <Button size="lg" className="bg-orange-600 hover:bg-orange-700 text-white" onClick={handleGetStarted}>
             Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
-          <Button size="lg" variant="outline" onClick={handleGetStarted}>
+          <Button size="lg" variant="outline" className="border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20" onClick={handleGetStarted}>
             See How It Works
           </Button>
         </div>
