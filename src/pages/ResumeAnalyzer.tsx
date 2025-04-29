@@ -1,29 +1,48 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import ResumeUploader from "@/components/resume/ResumeUploader";
 import ResumeAnalysis from "@/components/resume/ResumeAnalysis";
 
 const ResumeAnalyzer = () => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  // Check authentication state on component mount
+  useEffect(() => {
+    const user = localStorage.getItem("saarthi_user");
+    if (!user) {
+      // Redirect to login if not authenticated
+      navigate("/login");
+    } else {
+      setIsLoggedIn(true);
+    }
+  }, [navigate]);
+
+  const handleUploadComplete = (file: File) => {
+    setUploadedFile(file);
+  };
+
+  // If not logged in, component will redirect before rendering
+  if (!isLoggedIn) {
+    return null;
+  }
 
   return (
     <Layout>
-      <div className="container mx-auto pt-24 pb-16 px-4">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            AI-Powered <span className="gradient-text">Resume Analyzer</span>
-          </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Upload your resume and get AI-driven insights, optimization tips, and personalized recommendations to make your resume stand out.
-          </p>
-        </div>
+      <div className="container mx-auto py-24 px-4">
+        <h1 className="text-3xl md:text-4xl font-bold mb-2 text-center">
+          AI Resume <span className="gradient-text">Analyzer</span>
+        </h1>
+        <p className="text-gray-600 dark:text-gray-300 text-center mb-12 max-w-2xl mx-auto">
+          Upload your resume for instant AI analysis, skill assessment, and a personalized Career Fit Score to help you stand out to employers.
+        </p>
 
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           {!uploadedFile ? (
-            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
-              <ResumeUploader onUploadComplete={setUploadedFile} />
-            </div>
+            <ResumeUploader onUploadComplete={handleUploadComplete} />
           ) : (
             <ResumeAnalysis file={uploadedFile} />
           )}

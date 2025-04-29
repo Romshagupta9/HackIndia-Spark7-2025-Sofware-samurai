@@ -3,7 +3,11 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
-const CTASection = () => {
+interface CTASectionProps {
+  onCTAClick: () => void;
+}
+
+const CTASection = ({ onCTAClick }: CTASectionProps) => {
   return (
     <section className="py-24 px-4 relative overflow-hidden">
       {/* Background gradient effects */}
@@ -22,13 +26,11 @@ const CTASection = () => {
             Get started with Saarthi today and unlock your full potential.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-blue-purple-gradient" asChild>
-              <Link to="/signup">
-                Start Free Trial <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
+            <Button size="lg" className="bg-blue-purple-gradient" onClick={onCTAClick}>
+              Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link to="/contact">Schedule a Demo</Link>
+            <Button size="lg" variant="outline" onClick={onCTAClick}>
+              Schedule a Demo
             </Button>
           </div>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-6">

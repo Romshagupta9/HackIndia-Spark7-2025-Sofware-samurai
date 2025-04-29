@@ -12,6 +12,7 @@ const ResumeUploader = ({ onUploadComplete }: ResumeUploaderProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [jobDescription, setJobDescription] = useState("");
 
   const allowedFileTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
 
@@ -138,6 +139,20 @@ const ResumeUploader = ({ onUploadComplete }: ResumeUploaderProps) => {
               <X className="h-5 w-5 text-gray-500 dark:text-gray-400" />
             </button>
           </div>
+          
+          <div className="mt-6">
+            <label htmlFor="job-description" className="block text-sm font-medium mb-2">
+              Add a Job Description for Career Fit Score (optional)
+            </label>
+            <textarea
+              id="job-description"
+              className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow"
+              rows={4}
+              placeholder="Paste a job description here to analyze your resume's fit with this specific role..."
+              value={jobDescription}
+              onChange={(e) => setJobDescription(e.target.value)}
+            />
+          </div>
 
           <div className="mt-6">
             <Button
@@ -172,6 +187,10 @@ const ResumeUploader = ({ onUploadComplete }: ResumeUploaderProps) => {
           <li className="flex items-center text-sm text-gray-600 dark:text-gray-300">
             <Check className="h-4 w-4 mr-2 text-green-500" />
             Include relevant skills, education, and contact information
+          </li>
+          <li className="flex items-center text-sm text-gray-600 dark:text-gray-300">
+            <Check className="h-4 w-4 mr-2 text-green-500" />
+            For a more accurate Career Fit Score, add the job description you're targeting
           </li>
         </ul>
       </div>

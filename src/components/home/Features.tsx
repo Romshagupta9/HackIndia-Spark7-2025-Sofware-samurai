@@ -8,14 +8,19 @@ import {
 const FeatureCard = ({ 
   icon: Icon, 
   title, 
-  description 
+  description,
+  onClick 
 }: { 
   icon: React.ElementType; 
   title: string; 
   description: string;
+  onClick: () => void;
 }) => {
   return (
-    <div className="glass-card p-6 rounded-xl flex flex-col items-start transition-all duration-300 hover:shadow-glow">
+    <div 
+      className="glass-card p-6 rounded-xl flex flex-col items-start transition-all duration-300 hover:shadow-glow cursor-pointer"
+      onClick={onClick}
+    >
       <div className="bg-blue-purple-gradient p-3 rounded-lg mb-4">
         <Icon className="h-6 w-6 text-white" />
       </div>
@@ -25,7 +30,7 @@ const FeatureCard = ({
   );
 };
 
-const Features = () => {
+const Features = ({ onFeatureClick }: { onFeatureClick: () => void }) => {
   const features = [
     {
       icon: FileText,
@@ -100,6 +105,7 @@ const Features = () => {
                 icon={feature.icon}
                 title={feature.title}
                 description={feature.description}
+                onClick={onFeatureClick}
               />
             </div>
           ))}

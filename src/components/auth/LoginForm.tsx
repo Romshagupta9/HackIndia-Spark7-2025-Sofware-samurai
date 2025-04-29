@@ -1,12 +1,16 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, AlertCircle } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 const LoginForm = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
   const [formState, setFormState] = useState({
     email: "",
     password: "",
@@ -68,16 +72,25 @@ const LoginForm = () => {
     setTimeout(() => {
       setLoading(false);
       
-      // Simulate successful login
-      if (formState.email === "demo@saarthi.ai" && formState.password === "password") {
-        console.log("Login successful");
-        // Redirect would happen here in a real app
-      } else {
-        setErrors({
-          ...errors,
-          general: "Invalid email or password. Try demo@saarthi.ai / password",
-        });
-      }
+      // For demo purposes, accept any email/password and create a user object
+      const userData = {
+        id: "user-123",
+        name: "Demo User",
+        email: formState.email,
+        profilePicture: null
+      };
+      
+      // Save user data to localStorage
+      localStorage.setItem("saarthi_user", JSON.stringify(userData));
+      
+      // Show success message
+      toast({
+        title: "Login Successful",
+        description: "Welcome back to Saarthi!",
+      });
+      
+      // Redirect to home page or previous intended destination
+      navigate("/");
     }, 1000);
   };
 
