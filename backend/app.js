@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 
 const authRoutes = require('./routes/authRoutes');
+const resumeRoutes = require("./routes/resumeRoutes");
 
 dotenv.config();
 
@@ -15,6 +16,11 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
+
+app.use("/api/resume", resumeRoutes);
+
+
+
 
 // Database Connection
 connectDB();
