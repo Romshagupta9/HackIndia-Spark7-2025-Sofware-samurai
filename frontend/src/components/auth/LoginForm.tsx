@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,11 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, AlertCircle } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import api from "@/config/axios";
 
 const LoginForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+
   const [formState, setFormState] = useState({
     email: "",
     password: "",
@@ -25,16 +25,14 @@ const LoginForm = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setFormState((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-    
-    // Clear errors as user types
+
+    // Clear error as user types
     if (errors[name as keyof typeof errors]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
@@ -61,37 +59,47 @@ const LoginForm = () => {
     return isValid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
-    
     setLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
-      
-      // For demo purposes, accept any email/password and create a user object
-      const userData = {
-        id: "user-123",
-        name: "Demo User",
+
+    try {
+      const { data } = await api.post("/auth/login", {
         email: formState.email,
-        profilePicture: null
-      };
-      
-      // Save user data to localStorage
-      localStorage.setItem("saarthi_user", JSON.stringify(userData));
-      
-      // Show success message
-      toast({
-        title: "Login Successful",
-        description: "Welcome back to Saarthi!",
+        password: formState.password,
       });
-      
-      // Redirect to home page or previous intended destination
-      navigate("/");
-    }, 1000);
+
+      if (data && data.token) {
+        localStorage.setItem(
+          "saarthi_user",
+          JSON.stringify({
+            id: data._id,
+            name: data.name,
+            email: data.email,
+          })
+        );
+        localStorage.setItem("saarthi_token", data.token);
+
+        toast({
+          title: "Login successful!",
+          description: `Welcome back, ${data.name}`,
+        });
+
+        navigate("/");
+      } else {
+        throw new Error("Invalid response from server");
+      }
+    } catch (err: any) {
+      setLoading(false);
+      const errorMessage = err.response?.data?.message || "Something went wrong";
+      setErrors(prev => ({...prev, general: errorMessage}));
+      toast({
+        title: "Login failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
