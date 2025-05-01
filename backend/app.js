@@ -8,9 +8,13 @@ const authRoutes = require('./routes/authRoutes');
 dotenv.config();
 
 const app = express();
+app.use(cors({
+    origin: "http://localhost:8081", // your frontend's port
+    credentials: true
+  }));
 
 // Middleware
-app.use(cors());
+
 app.use(express.json());
 
 // Routes

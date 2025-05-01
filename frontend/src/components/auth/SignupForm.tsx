@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,11 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, User, AlertCircle } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import api from '@/config/axios';
 
 const SignupForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+
   const [formState, setFormState] = useState({
     name: "",
     email: "",
@@ -23,16 +23,15 @@ const SignupForm = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    general: "",
   });
 
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormState((prev) => ({ ...prev, [name]: value }));
-    
-    // Clear errors as user types
+
     if (errors[name as keyof typeof errors]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
@@ -72,36 +71,48 @@ const SignupForm = () => {
     return isValid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
-    
     setLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      // Create user data object
-      const userData = {
-        id: "user-" + Date.now(),
+
+    try {
+      const { data } = await api.post('/auth/signup', {
         name: formState.name,
         email: formState.email,
-        profilePicture: null
-      };
-      
-      // Save user data to localStorage to simulate authentication
-      localStorage.setItem("saarthi_user", JSON.stringify(userData));
-      
-      setLoading(false);
-      
-      toast({
-        title: "Account created!",
-        description: "Welcome to Saarthi AI Career Assistant!",
+        password: formState.password,
       });
-      
-      // Navigate to home page
-      navigate("/");
-    }, 1500);
+
+      if (data && data.token) {
+        localStorage.setItem('saarthi_user', JSON.stringify({
+          id: data._id,
+          name: data.name,
+          email: data.email,
+        }));
+        localStorage.setItem('saarthi_token', data.token);
+
+        toast({
+          title: 'Account created!',
+          description: 'Welcome to Saarthi AI Career Assistant!',
+        });
+
+        navigate('/');
+      } else {
+        throw new Error("Invalid response from server");
+      }
+    } catch (err: any) {
+      setLoading(false);
+      const errorMessage = err.response?.data?.message || 'Something went wrong';
+      setErrors(prev => ({
+        ...prev,
+        general: errorMessage
+      }));
+      toast({
+        title: 'Signup failed',
+        description: errorMessage,
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
@@ -201,6 +212,13 @@ const SignupForm = () => {
             </div>
           )}
         </div>
+
+        {errors.general && (
+          <div className="text-red-500 text-sm flex items-center mt-1">
+            <AlertCircle className="h-4 w-4 mr-1" />
+            {errors.general}
+          </div>
+        )}
 
         <Button
           className="bg-blue-purple-gradient w-full"
