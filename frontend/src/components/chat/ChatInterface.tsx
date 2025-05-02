@@ -52,33 +52,40 @@ const ChatInterface = () => {
     }, 1500);
   };
 
-  const generateResponse = (userInput: string) => {
-    let botResponse = "";
-
-    // Simple response logic for demo purposes
-    const input = userInput.toLowerCase();
-    
-    if (input.includes("resume") || input.includes("cv")) {
-      botResponse = "To improve your resume, consider these key points:\n\n1. Start with a strong professional summary that highlights your unique value proposition\n2. Use quantifiable achievements rather than just listing responsibilities\n3. Tailor your skills section to match the job descriptions you're targeting\n4. Ensure your format is ATS-friendly and consistent\n\nWould you like me to review specific parts of your resume?";
-    } else if (input.includes("interview") || input.includes("job offer")) {
-      botResponse = "Preparing for interviews is crucial. Here are some tips:\n\n• Research the company thoroughly before your interview\n• Prepare stories using the STAR method (Situation, Task, Action, Result)\n• Practice common questions but don't sound too rehearsed\n• Prepare thoughtful questions for the interviewer\n\nDo you have a specific interview coming up that you'd like to discuss?";
-    } else if (input.includes("skill") || input.includes("learn") || input.includes("course")) {
-      botResponse = "Continuous learning is essential in today's job market. Based on current trends, these skills are in high demand:\n\n• Data analysis and visualization\n• AI/ML fundamentals\n• Cloud computing platforms\n• Digital marketing and SEO\n• UX/UI design\n\nWhat industry or role are you interested in, so I can provide more targeted skill recommendations?";
-    } else if (input.includes("salary") || input.includes("negotiation") || input.includes("offer")) {
-      botResponse = "Salary negotiation requires preparation. Here's my advice:\n\n1. Research the market rate for your position and location\n2. Consider the entire compensation package, not just salary\n3. Practice your negotiation conversation\n4. Start slightly higher than your target salary\n5. Emphasize the value you bring to the company\n\nWould you like tips for a specific negotiation scenario?";
-    } else {
-      botResponse = "Thank you for your question! As your career assistant, I can help with resume optimization, interview preparation, job search strategies, skill development, and career planning. Could you provide more details about what you're looking for?";
+  const generateResponse = async (userInput: string) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/chatbot/ask", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: userInput }),
+      });
+  
+      const data = await response.json();
+  
+      const aiMessage: Message = {
+        id: Date.now().toString(),
+        text: data.reply || "Sorry, I couldn't understand that. Try again.",
+        sender: "bot",
+        timestamp: Date.now(),
+      };
+  
+      setMessages((prev) => [...prev, aiMessage]);
+    } catch (error) {
+      console.error("Error generating Gemini response:", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          text: "Something went wrong while contacting Gemini. Please try again later.",
+          sender: "bot",
+          timestamp: Date.now(),
+        },
+      ]);
+    } finally {
+      setIsProcessing(false);
     }
-
-    const aiMessage: Message = {
-      id: Date.now().toString(),
-      text: botResponse,
-      sender: "bot",
-      timestamp: Date.now(),
-    };
-
-    setMessages((prev) => [...prev, aiMessage]);
-    setIsProcessing(false);
   };
 
   const handleToggleVoice = () => {

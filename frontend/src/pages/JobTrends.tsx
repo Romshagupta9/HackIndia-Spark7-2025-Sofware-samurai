@@ -1,50 +1,210 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, BarChart3, Search, Filter, IndianRupee } from "lucide-react";
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, 
-  Tooltip, ResponsiveContainer, LineChart, Line, 
-  PieChart, Pie, Cell, Legend 
-} from "recharts";
+import { RefreshCw, Share2 } from "lucide-react";
+
+const sectors = [
+  { id: 'tech', name: 'Technology' },
+  { id: 'finance', name: 'Finance' },
+  { id: 'healthcare', name: 'Healthcare' },
+  { id: 'marketing', name: 'Marketing' },
+];
 
 const JobTrends = () => {
   const [activeTab, setActiveTab] = useState<'market' | 'skills' | 'salaries'>('market');
   const [selectedSector, setSelectedSector] = useState("tech");
+  const [location, setLocation] = useState("All");
+  const [jobType, setJobType] = useState("All");
+  const [experience, setExperience] = useState("All");
+  const [loading, setLoading] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  // Mock data for charts
-  const marketTrendsData = [
-    { name: 'Jan', openings: 4000, applications: 2400 },
-    { name: 'Feb', openings: 3000, applications: 1398 },
-    { name: 'Mar', openings: 2000, applications: 9800 },
-    { name: 'Apr', openings: 2780, applications: 3908 },
-    { name: 'May', openings: 1890, applications: 4800 },
-    { name: 'Jun', openings: 2390, applications: 3800 },
-  ];
+  const [marketTrendsData, setMarketTrendsData] = useState([]);
+  const [skillsData, setSkillsData] = useState([]);
+  const [salaryData, setSalaryData] = useState([]);
+  const [topRolesData, setTopRolesData] = useState([]);
+  const [hotSkills, setHotSkills] = useState([]);
+  const [companiesHiring, setCompaniesHiring] = useState([]);
+  const [remoteVsOnsite, setRemoteVsOnsite] = useState([]);
+  const [diversityData, setDiversityData] = useState([]);
+  const [skillPredictions, setSkillPredictions] = useState([]);
+  const [aiCareerPaths, setAiCareerPaths] = useState([]);
+  const [skillToRoleMap, setSkillToRoleMap] = useState([]);
+  const [salaryGrowthData, setSalaryGrowthData] = useState([]);
+  const [personalizedRadar, setPersonalizedRadar] = useState([]);
+  const [selectedRole, setSelectedRole] = useState("");
+  const [userSkills, setUserSkills] = useState(["React.js", "Python", "Cloud"]);
 
-  const skillsData = [
-    { name: 'React', value: 90 },
-    { name: 'Python', value: 85 },
-    { name: 'Data Science', value: 70 },
-    { name: 'Cloud', value: 65 },
-    { name: 'AI/ML', value: 60 }
-  ];
+  // Fetch real-time data from APIs
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+    async function fetchData() {
+      try {
+        async function safeFetch(url: string) {
+          if (!url.startsWith("/api/")) {
+            throw new Error("Frontend tried to fetch a non-API route: " + url);
+          }
+          const res = await fetch(url);
+          const contentType = res.headers.get("content-type");
+          if (contentType && contentType.includes("text/html")) {
+            const text = await res.text();
+            throw new Error(
+              "API endpoint not found or misconfigured. Got HTML instead of JSON. " +
+                "Check your backend is running and /api/* routes are correct. " +
+                "Response: " +
+                text.slice(0, 200)
+            );
+          }
+          if (!res.ok) {
+            if (contentType && contentType.includes("application/json")) {
+              const err = await res.json();
+              throw new Error(err.error || "API error");
+            } else {
+              const errText = await res.text();
+              throw new Error(errText || "API error");
+            }
+          }
+          if (contentType && contentType.includes("application/json")) {
+            return res.json();
+          } else {
+            const text = await res.text();
+            throw new Error("Unexpected response: " + text);
+          }
+        }
 
-  const salaryData = [
-    { name: 'Junior', value: 800000 },
-    { name: 'Mid-level', value: 1500000 },
-    { name: 'Senior', value: 2800000 },
-    { name: 'Lead', value: 4200000 }
-  ];
+        const marketJson = await safeFetch(`/api/job-trends?sector=${selectedSector}&location=${location}&jobType=${jobType}&experience=${experience}`);
+        if (!isMounted) return;
+        setMarketTrendsData(marketJson.trends || []);
 
-  const COLORS = ['#8884d8', '#83a6ed', '#8dd1e1', '#82ca9d', '#a4de6c'];
+        const skillsJson = await safeFetch(`/api/skills?sector=${selectedSector}`);
+        if (!isMounted) return;
+        setSkillsData(skillsJson.skills || []);
+        setHotSkills(skillsJson.hotSkills || []);
 
-  const sectors = [
-    { id: 'tech', name: 'Technology' },
-    { id: 'finance', name: 'Finance' },
-    { id: 'healthcare', name: 'Healthcare' },
-    { id: 'marketing', name: 'Marketing' },
-  ];
+        const salaryJson = await safeFetch(`/api/salaries?sector=${selectedSector}&location=${location}&experience=${experience}`);
+        if (!isMounted) return;
+        setSalaryData(salaryJson.salaries || []);
+
+        const rolesJson = await safeFetch(`/api/top-roles?sector=${selectedSector}`);
+        if (!isMounted) return;
+        setTopRolesData(rolesJson.roles || []);
+        if (
+          rolesJson.roles &&
+          rolesJson.roles.length > 0 &&
+          (!selectedRole || !rolesJson.roles.some((r: any) => r.name === selectedRole))
+        ) {
+          setSelectedRole(rolesJson.roles[0].name);
+        }
+
+        const companiesJson = await safeFetch(`/api/companies-hiring?sector=${selectedSector}`);
+        if (!isMounted) return;
+        setCompaniesHiring(companiesJson.companies || []);
+
+        const remoteJson = await safeFetch(`/api/remote-onsite?sector=${selectedSector}`);
+        if (!isMounted) return;
+        setRemoteVsOnsite(remoteJson.stats || []);
+
+        const diversityJson = await safeFetch(`/api/diversity?sector=${selectedSector}`);
+        if (!isMounted) return;
+        setDiversityData(diversityJson.diversity || []);
+
+        const skillPredJson = await safeFetch(`/api/skill-predictions?sector=${selectedSector}`);
+        if (!isMounted) return;
+        setSkillPredictions(skillPredJson.predictions || []);
+
+        const aiCareerJson = await safeFetch(`/api/ai-career-paths?sector=${selectedSector}&skills=${userSkills.join(",")}`);
+        if (!isMounted) return;
+        setAiCareerPaths(aiCareerJson.paths || []);
+
+        const skillRoleJson = await safeFetch(`/api/skill-role-map?sector=${selectedSector}&skills=${userSkills.join(",")}`);
+        if (!isMounted) return;
+        setSkillToRoleMap(skillRoleJson.map || []);
+
+        const radarJson = await safeFetch(`/api/opportunity-radar?sector=${selectedSector}&skills=${userSkills.join(",")}`);
+        if (!isMounted) return;
+        setPersonalizedRadar(radarJson.radar || []);
+      } catch (err: any) {
+        if (isMounted) {
+          console.error(err);
+          alert("Error loading dashboard data: " + err.message);
+        }
+      }
+      if (isMounted) setLoading(false);
+    }
+    fetchData();
+    const interval = setInterval(fetchData, 60000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [selectedSector, location, jobType, experience, userSkills, refreshKey]);
+
+  // Fetch salary growth only when selectedRole or selectedSector changes
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchSalaryGrowth() {
+      if (!selectedRole) {
+        setSalaryGrowthData([]);
+        return;
+      }
+      try {
+        async function safeFetch(url: string) {
+          if (!url.startsWith("/api/")) throw new Error("Frontend tried to fetch a non-API route: " + url);
+          const res = await fetch(url);
+          const contentType = res.headers.get("content-type");
+          if (contentType && contentType.includes("text/html")) {
+            const text = await res.text();
+            throw new Error(
+              "API endpoint not found or misconfigured. Got HTML instead of JSON. " +
+                "Check your backend is running and /api/* routes are correct. " +
+                "Response: " +
+                text.slice(0, 200)
+            );
+          }
+          if (!res.ok) {
+            if (contentType && contentType.includes("application/json")) {
+              const err = await res.json();
+              throw new Error(err.error || "API error");
+            } else {
+              const errText = await res.text();
+              throw new Error(errText || "API error");
+            }
+          }
+          if (contentType && contentType.includes("application/json")) {
+            return res.json();
+          } else {
+            const text = await res.text();
+            throw new Error("Unexpected response: " + text);
+          }
+        }
+        const salaryGrowthJson = await safeFetch(`/api/salary-growth?role=${selectedRole}&sector=${selectedSector}`);
+        if (isMounted) setSalaryGrowthData(salaryGrowthJson.growth || []);
+      } catch (err: any) {
+        if (isMounted) setSalaryGrowthData([]);
+      }
+    }
+    fetchSalaryGrowth();
+    return () => { isMounted = false; };
+  }, [selectedRole, selectedSector]);
+
+  const handleRefresh = () => {
+    setRefreshKey((k) => k + 1);
+  };
+
+  const handleShare = () => {
+    alert("Share Insights feature coming soon! (PDF/Email export)");
+  };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="container mx-auto pt-24 pb-16 px-4 flex justify-center items-center h-96">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary"></div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -58,7 +218,33 @@ const JobTrends = () => {
           </p>
         </div>
 
-        {/* Sector selector */}
+        <div className="max-w-4xl mx-auto mb-6 flex flex-wrap gap-3 items-center justify-between">
+          <div className="flex flex-wrap gap-2">
+            <select className="border rounded px-3 py-1 text-sm" value={location} onChange={e => setLocation(e.target.value)}>
+              <option value="All">All Locations</option>
+              {/* Add dynamic options */}
+            </select>
+            <select className="border rounded px-3 py-1 text-sm" value={jobType} onChange={e => setJobType(e.target.value)}>
+              <option value="All">All Job Types</option>
+              {/* Add dynamic options */}
+            </select>
+            <select className="border rounded px-3 py-1 text-sm" value={experience} onChange={e => setExperience(e.target.value)}>
+              <option value="All">All Experience</option>
+              {/* Add dynamic options */}
+            </select>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={handleRefresh} disabled={loading}>
+              <RefreshCw className={`h-4 w-4 mr-1 ${loading ? "animate-spin" : ""}`} />
+              {loading ? "Refreshing..." : "Refresh"}
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleShare}>
+              <Share2 className="h-4 w-4 mr-1" />
+              Share Insights
+            </Button>
+          </div>
+        </div>
+
         <div className="max-w-4xl mx-auto mb-8">
           <div className="flex flex-col sm:flex-row items-center justify-between">
             <h2 className="text-xl font-semibold mb-4 sm:mb-0">Sector Analysis</h2>
@@ -77,191 +263,181 @@ const JobTrends = () => {
           </div>
         </div>
 
-        {/* Tab navigation */}
-        <div className="max-w-4xl mx-auto mb-6">
-          <div className="flex border-b border-gray-200 dark:border-gray-800">
-            <button
-              className={`px-4 py-3 font-medium flex items-center ${
-                activeTab === "market"
-                  ? "text-primary border-b-2 border-primary"
-                  : "text-gray-600 dark:text-gray-300"
-              }`}
-              onClick={() => setActiveTab("market")}
-            >
-              <TrendingUp className="h-5 w-5 mr-2" />
-              Market Trends
-            </button>
-            <button
-              className={`px-4 py-3 font-medium flex items-center ${
-                activeTab === "skills"
-                  ? "text-primary border-b-2 border-primary"
-                  : "text-gray-600 dark:text-gray-300"
-              }`}
-              onClick={() => setActiveTab("skills")}
-            >
-              <BarChart3 className="h-5 w-5 mr-2" />
-              In-Demand Skills
-            </button>
-            <button
-              className={`px-4 py-3 font-medium flex items-center ${
-                activeTab === "salaries"
-                  ? "text-primary border-b-2 border-primary"
-                  : "text-gray-600 dark:text-gray-300"
-              }`}
-              onClick={() => setActiveTab("salaries")}
-            >
-              <Filter className="h-5 w-5 mr-2" />
-              Salary Benchmarks
-            </button>
-          </div>
+        {/* Tabs for Market, Skills, Salaries */}
+        <div className="max-w-4xl mx-auto mb-8 flex gap-4">
+          <Button variant={activeTab === "market" ? "default" : "outline"} onClick={() => setActiveTab("market")}>
+            Market Trends
+          </Button>
+          <Button variant={activeTab === "skills" ? "default" : "outline"} onClick={() => setActiveTab("skills")}>
+            Skills
+          </Button>
+          <Button variant={activeTab === "salaries" ? "default" : "outline"} onClick={() => setActiveTab("salaries")}>
+            Salaries
+          </Button>
         </div>
 
-        {/* Tab content */}
-        <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
+        {/* Real Data Display */}
+        <div className="max-w-4xl mx-auto mb-8">
+          {/* Market Trends */}
           {activeTab === "market" && (
-            <div className="animate-fade-in">
-              <h3 className="font-semibold text-lg mb-4">Job Market Trends in {sectors.find(s => s.id === selectedSector)?.name}</h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Analysis of job openings versus applications over the past 6 months.
-              </p>
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    data={marketTrendsData}
-                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="openings" stroke="#8884d8" activeDot={{ r: 8 }} />
-                    <Line type="monotone" dataKey="applications" stroke="#82ca9d" />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                <h4 className="font-medium mb-2">Key Insights:</h4>
-                <ul className="list-disc pl-5 space-y-1 text-sm text-gray-600 dark:text-gray-300">
-                  <li>Job openings decreased by 15% in April but are now showing recovery</li>
-                  <li>Application competition is highest in March, with 4.9 applications per opening</li>
-                  <li>Remote job opportunities increased by 22% compared to last quarter</li>
-                </ul>
-              </div>
+            <div>
+              <h3 className="font-semibold mb-3">Job Market Trends ({sectors.find(s => s.id === selectedSector)?.name})</h3>
+              {marketTrendsData.length === 0 && <div className="text-gray-400">No data available for this sector.</div>}
+              <ul className="space-y-2">
+                {marketTrendsData.map((trend: any, i) => (
+                  <li key={i} className="border-b py-2 flex justify-between">
+                    <span>{trend.name || trend.month || trend.title || `Month ${i+1}`}</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">
+                      {trend.openings ? `Openings: ${trend.openings}` : ""}
+                      {trend.applications ? ` | Applications: ${trend.applications}` : ""}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 
+          {/* Skills */}
           {activeTab === "skills" && (
-            <div className="animate-fade-in">
-              <h3 className="font-semibold text-lg mb-4">Most In-Demand Skills in {sectors.find(s => s.id === selectedSector)?.name}</h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Analysis of skills mentioned most frequently in job descriptions.
-              </p>
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={skillsData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {skillsData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                <h4 className="font-medium mb-2">Emerging Skills:</h4>
-                <ul className="list-disc pl-5 space-y-1 text-sm text-gray-600 dark:text-gray-300">
-                  <li>AI/ML skills demand grew 45% year-over-year</li>
-                  <li>Cloud computing specialists are sought after in 62% of tech job postings</li>
-                  <li>Data visualization is now mentioned in 38% of analyst positions</li>
-                </ul>
-              </div>
+            <div>
+              <h3 className="font-semibold mb-3">Top Skills ({sectors.find(s => s.id === selectedSector)?.name})</h3>
+              {skillsData.length === 0 && <div className="text-gray-400">No data available for this sector.</div>}
+              <ul className="space-y-2">
+                {skillsData.map((skill: any, i) => (
+                  <li key={i} className="flex justify-between border-b py-2">
+                    <span>{skill.name}</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">
+                      {skill.value ? `Jobs: ${skill.value}` : ""}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              {/* Hot Skills */}
+              {hotSkills.length > 0 && (
+                <div className="mt-6">
+                  <h4 className="font-medium mb-2">Hot Skills</h4>
+                  <ul className="flex flex-wrap gap-3">
+                    {hotSkills.map((hs: any, i) => (
+                      <li key={i} className="px-3 py-1 bg-orange-100 dark:bg-green-900/20 rounded-full text-sm">
+                        {hs.skill || hs.name} {hs.growth ? `(+${hs.growth}%)` : ""}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           )}
 
+          {/* Salaries */}
           {activeTab === "salaries" && (
-            <div className="animate-fade-in">
-              <h3 className="font-semibold text-lg mb-4">Salary Benchmarks in {sectors.find(s => s.id === selectedSector)?.name}</h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Average compensation by experience level in this sector.
-              </p>
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    width={500}
-                    height={300}
-                    data={salaryData}
-                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip formatter={(value) => `₹${value.toLocaleString()}`} />
-                    <Bar dataKey="value" fill="#8884d8" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                <h4 className="font-medium mb-2">Compensation Trends:</h4>
-                <ul className="list-disc pl-5 space-y-1 text-sm text-gray-600 dark:text-gray-300">
-                  <li>Senior-level salaries grew by 8.5% compared to last year</li>
-                  <li>Companies are offering 15% higher compensation for remote roles</li>
-                  <li>Tech specialists command a 22% premium over generalist positions</li>
-                </ul>
-              </div>
+            <div>
+              <h3 className="font-semibold mb-3">Salaries ({sectors.find(s => s.id === selectedSector)?.name})</h3>
+              {salaryData.length === 0 && <div className="text-gray-400">No data available for this sector.</div>}
+              <ul className="space-y-2">
+                {salaryData.map((salary: any, i) => (
+                  <li key={i} className="flex justify-between border-b py-2">
+                    <span>{salary.name}</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">
+                      {salary.value ? `₹${salary.value.toLocaleString("en-IN")}` : ""}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
+        </div>
 
-          <div className="mt-8 flex justify-center">
-            <Button className="bg-blue-purple-gradient">
-              Generate Custom Industry Report
-            </Button>
+        {/* Top Roles & Companies */}
+        <div className="max-w-4xl mx-auto mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Top Roles */}
+          <div className="glass-card p-4 rounded-xl flex flex-col">
+            <h4 className="font-medium mb-2">Top Roles</h4>
+            {topRolesData.length === 0 && <div className="text-gray-400">No data.</div>}
+            <ul className="space-y-1">
+              {topRolesData.map((role: any, i) => (
+                <li key={i} className="flex justify-between">
+                  <span>{role.name}</span>
+                  <span className="text-xs text-gray-500">{role.jobs ? `${role.jobs} jobs` : ""}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          {/* Top Companies */}
+          <div className="glass-card p-4 rounded-xl flex flex-col">
+            <h4 className="font-medium mb-2">Top Companies</h4>
+            {companiesHiring.length === 0 && <div className="text-gray-400">No data.</div>}
+            <ul className="space-y-1">
+              {companiesHiring.map((comp: any, i) => (
+                <li key={i} className="flex justify-between">
+                  <span>{comp.company}</span>
+                  <span className="text-xs text-gray-500">{comp.jobs ? `${comp.jobs} jobs` : ""}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          {/* Remote vs Onsite */}
+          <div className="glass-card p-4 rounded-xl flex flex-col">
+            <h4 className="font-medium mb-2">Remote vs Onsite</h4>
+            {remoteVsOnsite.length === 0 && <div className="text-gray-400">No data.</div>}
+            <ul className="space-y-1">
+              {remoteVsOnsite.map((stat: any, i) => (
+                <li key={i} className="flex justify-between">
+                  <span>{stat.type || stat.label}</span>
+                  <span className="text-xs text-gray-500">{stat.value}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          {/* Diversity */}
+          <div className="glass-card p-4 rounded-xl flex flex-col">
+            <h4 className="font-medium mb-2">Diversity</h4>
+            {diversityData.length === 0 && <div className="text-gray-400">No data.</div>}
+            <ul className="space-y-1">
+              {diversityData.map((div: any, i) => (
+                <li key={i} className="flex justify-between">
+                  <span>{div.label || div.type}</span>
+                  <span className="text-xs text-gray-500">{div.value}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
-        {/* Additional resources */}
-        <div className="max-w-4xl mx-auto mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="glass-card p-6 rounded-xl">
-            <h3 className="font-semibold mb-3">Resume Keywords</h3>
-            <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-              Optimize your resume with the most impactful keywords for your industry.
-            </p>
-            <Button variant="outline" size="sm" className="w-full">
-              <Search className="h-4 w-4 mr-2" />
-              Keyword Analysis
-            </Button>
-          </div>
-          <div className="glass-card p-6 rounded-xl">
-            <h3 className="font-semibold mb-3">Trending Certifications</h3>
-            <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-              Discover which credentials employers value most in your field.
-            </p>
-            <Button variant="outline" size="sm" className="w-full">
-              <Search className="h-4 w-4 mr-2" />
-              Certification Guide
-            </Button>
-          </div>
-          <div className="glass-card p-6 rounded-xl">
-            <h3 className="font-semibold mb-3">Company Insights</h3>
-            <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-              Research hiring trends for specific companies in your target list.
-            </p>
-            <Button variant="outline" size="sm" className="w-full">
-              <Search className="h-4 w-4 mr-2" />
-              Company Database
-            </Button>
-          </div>
+        {/* Salary Growth */}
+        <div className="max-w-4xl mx-auto mb-8">
+          <h4 className="font-medium mb-2">Salary Growth for {selectedRole || "Role"}</h4>
+          {salaryGrowthData.length === 0 && <div className="text-gray-400">No data.</div>}
+          <ul className="space-y-2">
+            {salaryGrowthData.map((growth: any, i) => (
+              <li key={i} className="flex justify-between border-b py-2">
+                <span>{growth.year || growth.label || `Year ${i + 1}`}</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">
+                  {growth.salary ? `₹${growth.salary.toLocaleString("en-IN")}` : ""}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Skill Predictions and AI Career Paths */}
+        <div className="max-w-4xl mx-auto mb-8">
+          <h4 className="font-medium mb-2">Skill Predictions (Next 6 months)</h4>
+          {skillPredictions.length === 0 && <div className="text-gray-400">No data.</div>}
+          <ul className="space-y-2">
+            {skillPredictions.map((pred: any, i) => (
+              <li key={i}>{typeof pred === "string" ? pred : pred.skill || pred.name}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="max-w-4xl mx-auto mb-10">
+          <h4 className="font-medium mb-2">AI Career Paths</h4>
+          {aiCareerPaths.length === 0 && <div className="text-gray-400">No data.</div>}
+          <ul className="space-y-2">
+            {aiCareerPaths.map((path: any, i) => (
+              <li key={i}>{typeof path === "string" ? path : path.title || path.name}</li>
+            ))}
+          </ul>
         </div>
       </div>
     </Layout>

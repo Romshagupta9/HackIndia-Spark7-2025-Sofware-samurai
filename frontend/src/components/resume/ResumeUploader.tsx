@@ -1,10 +1,9 @@
-
 import { useState } from "react";
 import { Upload, Check, AlertCircle, FileText, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ResumeUploaderProps {
-  onUploadComplete: (file: File) => void;
+  onUploadComplete: (data: any) => void;
 }
 
 const ResumeUploader = ({ onUploadComplete }: ResumeUploaderProps) => {
@@ -14,7 +13,11 @@ const ResumeUploader = ({ onUploadComplete }: ResumeUploaderProps) => {
   const [uploading, setUploading] = useState(false);
   const [jobDescription, setJobDescription] = useState("");
 
-  const allowedFileTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+  const allowedFileTypes = [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ];
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -32,7 +35,8 @@ const ResumeUploader = ({ onUploadComplete }: ResumeUploaderProps) => {
       return false;
     }
 
-    if (file.size > 5 * 1024 * 1024) {  // 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      // 5MB
       setError("File size must be less than 5MB");
       return false;
     }
@@ -44,7 +48,7 @@ const ResumeUploader = ({ onUploadComplete }: ResumeUploaderProps) => {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const selectedFile = e.dataTransfer.files[0];
       if (validateFile(selectedFile)) {
@@ -67,16 +71,39 @@ const ResumeUploader = ({ onUploadComplete }: ResumeUploaderProps) => {
     setError(null);
   };
 
-  const handleUpload = () => {
-    if (!file) return;
-    
+  const handleUpload = async () => {
+    if (!file) {
+      setError("Please select a file to upload.");
+      return;
+    }
+
     setUploading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
+
+    const formData = new FormData();
+    formData.append("resume", file);
+    formData.append("jobDescription", jobDescription || "");
+
+    try {
+      const response = await fetch("http://localhost:5000/api/resume/analyze", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("saarthi_token")}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
       setUploading(false);
-      onUploadComplete(file);
-    }, 1500);
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to analyze resume");
+      }
+
+      onUploadComplete(data.analysis); // Pass analysis data to parent
+    } catch (error: any) {
+      setUploading(false);
+      setError(error.message || "An unexpected error occurred");
+    }
   };
 
   return (
@@ -139,7 +166,7 @@ const ResumeUploader = ({ onUploadComplete }: ResumeUploaderProps) => {
               <X className="h-5 w-5 text-gray-500 dark:text-gray-400" />
             </button>
           </div>
-          
+
           <div className="mt-6">
             <label htmlFor="job-description" className="block text-sm font-medium mb-2">
               Add a Job Description for Career Fit Score (optional)

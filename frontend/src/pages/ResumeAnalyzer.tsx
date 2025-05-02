@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
@@ -6,7 +5,9 @@ import ResumeUploader from "@/components/resume/ResumeUploader";
 import ResumeAnalysis from "@/components/resume/ResumeAnalysis";
 
 const ResumeAnalyzer = () => {
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<string | null>(null);
+  const [analysisData, setAnalysisData] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
@@ -14,20 +15,19 @@ const ResumeAnalyzer = () => {
   useEffect(() => {
     const user = localStorage.getItem("saarthi_user");
     if (!user) {
-      // Redirect to login if not authenticated
-      navigate("/login");
+      navigate("/login"); // Redirect to login if not authenticated
     } else {
       setIsLoggedIn(true);
     }
   }, [navigate]);
 
-  const handleUploadComplete = (file: File) => {
-    setUploadedFile(file);
+  const handleUploadComplete = (analysis: any) => {
+    setAnalysisData(analysis);
+    setUploadedFile("resume.pdf"); // Just a placeholder for file name
   };
 
-  // If not logged in, component will redirect before rendering
   if (!isLoggedIn) {
-    return null;
+    return null; // Redirecting, so don't render anything
   }
 
   return (
@@ -41,10 +41,16 @@ const ResumeAnalyzer = () => {
         </p>
 
         <div className="max-w-5xl mx-auto">
-          {!uploadedFile ? (
+          {error && <div className="text-red-500 text-center mb-4">{error}</div>}
+          {!analysisData ? (
             <ResumeUploader onUploadComplete={handleUploadComplete} />
           ) : (
-            <ResumeAnalysis file={uploadedFile} />
+            <ResumeAnalysis
+              file={
+                new File([""], uploadedFile || "resume.pdf", { type: "application/pdf" })
+              }
+              analysisData={analysisData}
+            />
           )}
         </div>
       </div>
