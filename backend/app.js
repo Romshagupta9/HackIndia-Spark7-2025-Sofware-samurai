@@ -5,6 +5,7 @@ const cors = require('cors');
 
 const authRoutes = require('./routes/authRoutes');
 const resumeRoutes = require("./routes/resumeRoutes");
+const chatbotRoutes = require("./routes/chatbotRoutes");
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 
 app.use("/api/resume", resumeRoutes);
+app.use("/api/chatbot", chatbotRoutes);
 
 
 
