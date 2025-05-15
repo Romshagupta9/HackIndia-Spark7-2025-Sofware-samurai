@@ -9,29 +9,33 @@ exports.uploadResume = upload.single("resume");
 
 exports.analyzeResume = async (req, res) => {
   try {
-    // Debug: log incoming file and body
-    console.log("req.file:", req.file);
-    console.log("req.body:", req.body);
+    const { jobDescription } = req.body;
 
-    const file = req.file;
-    const jobDescription = req.body && typeof req.body.jobDescription === "string" ? req.body.jobDescription : "";
-
-    if (!file) {
-      return res.status(400).json({ error: "No file uploaded" });
+    // Validate file and job description
+    if (!req.file) {
+      console.error("Resume file is missing in the request.");
+      return res.status(400).json({ error: "Resume file is required." });
+    }
+    if (!jobDescription) {
+      console.error("Job description is missing in the request.");
+      return res.status(400).json({ error: "Job description is required." });
     }
 
-    // Extract text from PDF (or DOCX if you support it)
-    const resumeText = await extractTextFromPDF(file.path);
+    console.log("Request file:", req.file);
+    console.log("Request body:", req.body);
 
-    // Real-time Gemini analysis (returns full structured report)
+    // Extract text from the uploaded PDF
+    const resumeText = await extractTextFromPDF(req.file.path);
+
+    // Analyze the resume using Gemini
     const analysis = await analyzeWithGemini(resumeText, jobDescription);
 
     res.status(200).json({
       success: true,
-      analysis, // This is the full report for the frontend
+      analysis,
     });
   } catch (error) {
-    console.error("Resume analysis error:", error.message, error.stack);
-    res.status(500).json({ error: error.message || "Failed to analyze resume. Please try again." });
+    console.error("Resume analysis error:", error.message);
+    res.status(500).json({ error: "Failed to analyze resume. Please try again." });
   }
 };

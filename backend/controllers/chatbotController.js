@@ -5,7 +5,8 @@ exports.chatbotReply = async (req, res) => {
   try {
     const { message } = req.body;
     if (!message) {
-      return res.status(400).json({ error: "Message is required" });
+      console.error("Missing 'message' field in request body");
+      return res.status(400).json({ error: "The 'message' field is required in the request body." });
     }
 
     const reply = await chatWithGeminiBot(message);
