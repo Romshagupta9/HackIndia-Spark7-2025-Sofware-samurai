@@ -5,12 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, AlertCircle } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import api from "@/config/axios";
 
 const LoginForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-
+  
   const [formState, setFormState] = useState({
     email: "",
     password: "",
@@ -25,14 +24,16 @@ const LoginForm = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const { name, value, type, checked } = e.target;
     setFormState((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-
-    // Clear error as user types
+    
+    // Clear errors as user types
     if (errors[name as keyof typeof errors]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
@@ -59,47 +60,37 @@ const LoginForm = () => {
     return isValid;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!validateForm()) return;
+    
     setLoading(true);
-
-    try {
-      const { data } = await api.post("/auth/login", {
-        email: formState.email,
-        password: formState.password,
-      });
-
-      if (data && data.token) {
-        localStorage.setItem(
-          "saarthi_user",
-          JSON.stringify({
-            id: data._id,
-            name: data.name,
-            email: data.email,
-          })
-        );
-        localStorage.setItem("saarthi_token", data.token);
-
-        toast({
-          title: "Login successful!",
-          description: `Welcome back, ${data.name}`,
-        });
-
-        navigate("/");
-      } else {
-        throw new Error("Invalid response from server");
-      }
-    } catch (err: any) {
+    
+    // Simulate API call
+    setTimeout(() => {
       setLoading(false);
-      const errorMessage = err.response?.data?.message || "Something went wrong";
-      setErrors(prev => ({...prev, general: errorMessage}));
+      
+      // For demo purposes, accept any email/password and create a user object
+      const userData = {
+        id: "user-123",
+        name: "Demo User",
+        email: formState.email,
+        profilePicture: null
+      };
+      
+      // Save user data to localStorage
+      localStorage.setItem("saarthi_user", JSON.stringify(userData));
+      
+      // Show success message
       toast({
-        title: "Login failed",
-        description: errorMessage,
-        variant: "destructive",
+        title: "Login Successful",
+        description: "Welcome back to Saarthi!",
       });
-    }
+      
+      // Redirect to home page or previous intended destination
+      navigate("/");
+    }, 1000);
   };
 
   return (
@@ -177,7 +168,9 @@ const LoginForm = () => {
             id="rememberMe"
             name="rememberMe"
             checked={formState.rememberMe}
-            onChange={handleChange}
+            onChange={(e) =>
+              setFormState((prev) => ({ ...prev, rememberMe: e.target.checked }))
+            }
             className="h-4 w-4 rounded border-gray-300 text-saarthi-purple focus:ring-saarthi-purple"
           />
           <Label htmlFor="rememberMe" className="text-sm font-normal">

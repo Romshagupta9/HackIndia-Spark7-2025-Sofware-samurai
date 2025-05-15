@@ -1,37 +1,42 @@
 const { extractTextFromPDF } = require("../utils/pdfParser");
 const { analyzeWithGemini } = require("../services/geminiService");
-const Resume = require("../models/Resume");
+const multer = require("multer");
+const path = require("path");
+
+const upload = multer({ dest: path.join(__dirname, "../uploads") });
+
+exports.uploadResume = upload.single("resume");
 
 exports.analyzeResume = async (req, res) => {
   try {
-    const file = req.file;
-    if (!file) {
-      return res.status(400).json({ error: "No file uploaded" });
+    const { jobDescription } = req.body;
+
+    // Validate file and job description
+    if (!req.file) {
+      console.error("Resume file is missing in the request.");
+      return res.status(400).json({ error: "Resume file is required." });
+    }
+    if (!jobDescription) {
+      console.error("Job description is missing in the request.");
+      return res.status(400).json({ error: "Job description is required." });
     }
 
-    const resumeText = await extractTextFromPDF(file.path);
-    const { analysis, extractedSkills, skillGaps } = await analyzeWithGemini(resumeText);
+    console.log("Request file:", req.file);
+    console.log("Request body:", req.body);
 
-    const newResume = new Resume({
-      userId: req.user.id,
-      filePath: file.path,
-      analysis,
-      extractedSkills,
-      skillGaps,
-    });
+    // Extract text from the uploaded PDF
+    const resumeText = await extractTextFromPDF(req.file.path);
 
-    await newResume.save();
+    // Analyze the resume using Gemini
+    const analysis = await analyzeWithGemini(resumeText, jobDescription);
 
     res.status(200).json({
       success: true,
       analysis,
-      extractedSkills,
-      skillGaps,
-      resumeId: newResume._id,
     });
-
   } catch (error) {
-    console.error("Resume analysis error:", error);
-    res.status(500).json({ error: "Something went wrong while analyzing resume" });
+    console.error("Resume analysis error:", error.message);
+    res.status(500).json({ error: "Failed to analyze resume. Please try again." });
   }
 };
+///resumeController.js

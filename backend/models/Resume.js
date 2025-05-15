@@ -13,8 +13,8 @@ const ResumeSchema = new mongoose.Schema({
   analysis: {
     type: String,
   },
-  extractedSkills: [String],  
-  skillGaps: [String],        
+  extractedSkills: [String],
+  skillGaps: [String],
 });
 
 module.exports = mongoose.model("Resume", ResumeSchema);
