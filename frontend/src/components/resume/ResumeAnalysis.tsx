@@ -265,3 +265,4 @@ const ResumeAnalysis = ({ file, analysisData }: ResumeAnalysisProps) => {
 };
 
 export default ResumeAnalysis;
+/// #region

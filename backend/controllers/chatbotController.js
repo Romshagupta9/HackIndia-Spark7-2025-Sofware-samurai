@@ -16,3 +16,5 @@ exports.chatbotReply = async (req, res) => {
     res.status(500).json({ error: "Something went wrong with chatbot" });
   }
 };
+/// @desc    Get user data
+// // chatbotController.j

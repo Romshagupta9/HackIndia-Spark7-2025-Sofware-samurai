@@ -20,3 +20,4 @@ async function getFuturePredictionsAI(sector) {
 }
 
 module.exports = { getJobTrendsAI, getFuturePredictionsAI };
+/// openaiService.js

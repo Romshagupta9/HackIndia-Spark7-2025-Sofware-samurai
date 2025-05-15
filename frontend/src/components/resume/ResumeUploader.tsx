@@ -226,3 +226,4 @@ const ResumeUploader = ({ onUploadComplete }: ResumeUploaderProps) => {
 };
 
 export default ResumeUploader;
+/// <div className="mt-6">

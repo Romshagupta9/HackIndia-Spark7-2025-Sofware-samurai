@@ -77,3 +77,4 @@ exports.analyzeWithGemini = async (resumeText, jobDescription) => {
     throw new Error("Gemini returned invalid JSON");
   }
 };
+/// @desc    Analyze resume with Gemini

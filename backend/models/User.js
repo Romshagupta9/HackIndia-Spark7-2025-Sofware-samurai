@@ -39,3 +39,5 @@ userSchema.methods.matchPassword = async function(enteredPassword) {
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
+///User.js
+// This code defines a Mongoose schema for a User model. The schema includes fields for name, email, and password. It also includes pre-save middleware to hash the password before saving it to the database and a method to compare the entered password with the hashed password. The model is then exported for use in other parts of the application.

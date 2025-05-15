@@ -30,3 +30,4 @@ router.get("/salary-growth", jobTrendsController.getSalaryGrowth);
 router.get("/opportunity-radar", jobTrendsController.getOpportunityRadar);
 
 module.exports = router;
+///jobTrendsRoutes.js

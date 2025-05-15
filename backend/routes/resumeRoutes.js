@@ -14,3 +14,4 @@ router.get("/upload", (req, res) => {
 router.post("/analyze", auth, upload.single("resume"), analyzeResume);
 
 module.exports = router;
+///resumeRoutes.js

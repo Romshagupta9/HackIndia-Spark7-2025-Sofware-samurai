@@ -21,3 +21,4 @@ User: ${message}
     throw new Error("Gemini chatbot error");
   }
 };
+////  chatbotService.js

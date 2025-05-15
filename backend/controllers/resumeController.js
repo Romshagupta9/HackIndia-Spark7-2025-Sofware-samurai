@@ -39,3 +39,4 @@ exports.analyzeResume = async (req, res) => {
     res.status(500).json({ error: "Failed to analyze resume. Please try again." });
   }
 };
+///resumeController.js

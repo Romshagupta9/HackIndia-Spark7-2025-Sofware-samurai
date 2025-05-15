@@ -651,3 +651,4 @@ exports.getOpportunityRadar = async (req, res) => {
     res.json({ radar: getMock(getSector(req), "radar") });
   }
 };
+///jobTrendsController.js

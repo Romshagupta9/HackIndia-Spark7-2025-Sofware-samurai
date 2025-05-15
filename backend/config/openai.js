@@ -9,3 +9,5 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 module.exports = openai;
+////openai.js
+// This code initializes the OpenAI API client using the OpenAI SDK.    
